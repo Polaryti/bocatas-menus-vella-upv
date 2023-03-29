@@ -121,7 +121,6 @@ def bocate_name_corrector(bocata_name):
     res = res.replace("atú n", "atún")
     res = res.replace("hu evo", "huevo")
 
-
     # Normalización de bocatas
     res = res.replace("tomate a rodajas y aceite", "tomate a rodajas")
     res = res.replace("Secreto iberico", "Secreto")
@@ -154,7 +153,10 @@ def bocatas_data_extractor():
         if "-" in line:
             pdf_date = line.strip().split()[1]
         elif "€" in line:
-            prices.append(line.strip().split()[1])
+            if "PRECIO" in line:
+                prices.append(line.strip().split()[1])
+            else:
+                prices.append(line.strip().split()[2])
         else:
             aux = line.replace(",", "")
             aux = aux.replace("(", "")
