@@ -120,6 +120,7 @@ def bocate_name_corrector(bocata_name):
     res = res.replace("pata tas", "patatas")
     res = res.replace("atú n", "atún")
     res = res.replace("hu evo", "huevo")
+    res = res.replace("a rodaja", "a rodajas")
 
     # Normalización de bocatas
     res = res.replace("tomate a rodajas y aceite", "tomate a rodajas")
@@ -213,8 +214,10 @@ def update_bocata_info(bocatas, prices, pdf_today):
 
             data[bocata]["frecuency"][FROM_NUMBER_TO_WEEK_DAY[week_day]] = 1
         else:
-            diff = float(data[bocata]["last_price"].replace(
-                ",", ".")) - float(price.replace(",", "."))
+            if float(data[bocata]["last_price"].replace(",", ".")) > float(price.replace(",", ".")):
+                diff = float(data[bocata]["last_price"].replace(",", ".")) - float(price.replace(",", "."))
+            else:
+                diff = float(price.replace(",", ".")) - float(data[bocata]["last_price"].replace(",", "."))
             aux_last_day = data[bocata]["last_day"]
             aux_last_price = data[bocata]["last_price"]
             data[bocata]["last_day"] = pdf_today
@@ -250,7 +253,7 @@ def update_bocata_info(bocatas, prices, pdf_today):
 def add_bocata_entry(bocata_name, bocata_data: dict, today):
     data = ["\"" + bocata_name + "\"",
             str(bocata_data["last_price"]).replace(",", "."), "\"" + today + "\""]
-    with open("bocata-data.csv", "a") as myBOCATAS_FILE:
+    with open("data/bocata-data.csv", "a") as myBOCATAS_FILE:
         myBOCATAS_FILE.write(",".join(data) + "\n")
 
 
