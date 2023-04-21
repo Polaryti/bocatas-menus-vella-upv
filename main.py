@@ -120,23 +120,41 @@ def bocate_name_corrector(bocata_name):
     res = res.replace("pata tas", "patatas")
     res = res.replace("atú n", "atún")
     res = res.replace("hu evo", "huevo")
-    res = res.replace("a rodaja", "a rodajas")
+    res = res.replace("a rodaja ", "a rodajas")
 
     # Normalización de bocatas
     res = res.replace("tomate a rodajas y aceite", "tomate a rodajas")
-    res = res.replace("Secreto iberico", "Secreto")
+    res = res.replace("secreto iberico", "secreto")
+    res = res.replace("secreto plancha", "secreto")
+    res = res.replace("secreto a la plancha", "secreto")
+    res = res.replace("ternera plancha", "ternera")
+    res = res.replace("ternera a la plancha", "ternera")
     res = res.replace("blanco y negro", "blanc i negre")
     res = res.replace("calamares romana", "calamares a la romana")
+    res = res.replace("longanizas camperas", "longaniza campera")
+    res = res.replace("longanizas criolla", "longaniza campera")
+    res = res.replace("criolla o campera", "campera")
+    res = res.replace("tortilla de ", "tortilla")
 
     # Normalización de ingredientes
     res = res.replace("all i oli", "allioli")
     res = res.replace("all y oli", "allioli")
+    res = res.replace("ajoaceite", "allioli")
+    res = res.replace("ajo aceite", "allioli")
     res = res.replace("alioli", "allioli")
     res = res.replace("jamon", "jamón")
     res = res.replace("calabacin", "calabacín")
-    res = res.replace("york", "York")
+    res = res.replace("jamón york", "jamón York")
     res = res.replace("bacon", "bacón")
     res = res.replace("mahonesa", "mayonesa")
+
+    # Casos muy especiales
+    if "palleter" in res:
+        res = "tortilla palleter (jamón serrano y atún)"
+    elif "pastor" in res:
+        res = "pastor (jamón plancha huevo frito y patatas a lo pobre)"
+    elif "esgarraet" in res:
+        res = "esgarraet (pimiento, bacalao, ajos y aceite)"
     
     return res.capitalize()
 
