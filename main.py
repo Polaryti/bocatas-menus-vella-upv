@@ -37,7 +37,7 @@ FROM_NUMBER_TO_MENU = {
 def download_pdf(menu: int):
     menu = FROM_NUMBER_TO_MENU[menu] + ".pdf"
     url = "http://www.lavella.es/doc/" + menu
-    response = requests.get(url, timeout=10)
+    response = requests.get(url)
 
     with open(menu, 'wb') as f:
         f.write(response.content)
@@ -126,6 +126,7 @@ def bocate_name_corrector(bocata_name):
 
     # Normalización de bocatas
     res = res.replace("tomate a rodajas y aceite", "tomate a rodajas")
+    res = res.replace("rodaja tomate", "tomate a rodajas")
     res = res.replace("secreto iberico", "secreto")
     res = res.replace("secreto plancha", "secreto")
     res = res.replace("secreto a la plancha", "secreto")
@@ -155,6 +156,7 @@ def bocate_name_corrector(bocata_name):
     res = res.replace("mahonesa", "mayonesa")
     res = res.replace("patatas fritas", "patatas")
     res = res.replace("huevo revuelto o roto", "huevo roto")
+    res = res.replace("atun", "atún")
 
     # Casos muy especiales
     if "palleter" in res:
