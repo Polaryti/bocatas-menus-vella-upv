@@ -185,7 +185,21 @@ def bocatas_data_extractor():
             pdf_date = line.strip().split()[1]
         elif "€" in line:
             if "PRECIO" in line:
-                prices.append(line.strip().split()[1])
+                if not line.strip().split()[1].isalpha():
+                    prices.append(line.strip().split()[1])
+                else:
+                    prices.append(line.strip().split()[-4])
+                    aux = line.replace(",", "")
+                    aux = aux.replace("(", "")
+                    aux = aux.replace(")", "")
+                    aux = aux.strip().split()[:-5]
+                    aux = " ".join(aux)
+                    if (any(x.isalpha() for x in aux)
+                        and any(x.isspace() for x in aux)
+                            and all(x.isalpha() or x.isspace() for x in aux)):
+                        bocatas.append((aux, i))
+                    i += 1
+                    
             else:
                 prices.append(line.strip().split()[2])
         else:
