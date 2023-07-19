@@ -117,31 +117,38 @@ def bocate_name_corrector(bocata_name):
     res = res.replace("pastor", "pastor:")
     res = res.replace("longani za", "longaniza")
     res = res.replace("ma honesa", "mahonesa")
+    res = res.replace("m ahonesa", "mahonesa")
     res = res.replace("pata tas", "patatas")
     res = res.replace("atú n", "atún")
     res = res.replace("hu evo", "huevo")
     res = res.replace("a rodaja ", "a rodajas")
     res = res.replace("chistorr a", "chistorra")
     res = res.replace("sal sa", "salsa")
+    res = res.replace("p lancha", "plancha")
+    res = res.replace("roda jas", "rodaja")
 
     # Normalización de bocatas
     res = res.replace("tomate a rodajas y aceite", "tomate a rodajas")
+    res = res.replace("con rodaja de tomate", "con tomate a rodajas")
     res = res.replace("rodaja tomate", "tomate a rodajas")
     res = res.replace("secreto iberico", "secreto")
     res = res.replace("secreto plancha", "secreto")
     res = res.replace("secreto a la plancha", "secreto")
     res = res.replace("ternera plancha", "ternera")
     res = res.replace("ternera a la plancha", "ternera")
+    res = res.replace("ternera y ", "ternera con ")
+    res = res.replace("lomo especial", "lomo")
     res = res.replace("lomo plancha", "lomo")
     res = res.replace("lomo a la plancha", "lomo")
+    res = res.replace("lomo y ", "lomo con ")
     res = res.replace("blanco y negro", "blanc i negre")
     res = res.replace("calamares romana", "calamares a la romana")
-    res = res.replace("longanizas camperas", "longaniza campera")
-    res = res.replace("longanizas criolla", "longaniza campera")
     res = res.replace("chistorra a la sidra", "chistorra")
-    res = res.replace("criolla o campera", "campera")
     res = res.replace("tortilla de ", "tortilla ")
-    res = res.replace("puntilla rebozada ", "puntilla a la andaluza ")
+    res = res.replace("puntilla rebozada", "puntilla a la andaluza")
+    res = res.replace("morcilla de burgos con huevo frito", "morcilla de burgos con huevo")
+    res = res.replace("morcilla de burgos con huevo roto", "morcilla de burgos con huevo")
+    
 
     # Normalización de ingredientes
     res = res.replace("all i oli", "allioli")
@@ -151,7 +158,6 @@ def bocate_name_corrector(bocata_name):
     res = res.replace("alioli", "allioli")
     res = res.replace("jamon", "jamón")
     res = res.replace("calabacin", "calabacín")
-    res = res.replace("jamón york", "jamón York")
     res = res.replace("bacon", "bacón")
     res = res.replace("mahonesa", "mayonesa")
     res = res.replace("patatas fritas", "patatas")
@@ -166,7 +172,11 @@ def bocate_name_corrector(bocata_name):
     elif "esgarraet" in res:
         res = "esgarraet (pimiento, bacalao, ajos y aceite)"
     elif "hamburguesa" in res:
-        res = "Hamburguesa (tomate, lechuga, cebolla, pan hamburguesa, mostaza suave, sobre de ketchup y patatas)"
+        res = "hamburguesa (tomate, lechuga, cebolla, pan hamburguesa, mostaza suave, sobre de ketchup y patatas)"
+    elif ("almussafes" in res) or ("almusafes" in res):
+        res = "Almussafes (sobrasada, queso y cebolla)"
+    elif ("verano") in res:
+        res = "verano (atún, huevo duro, tomate a rodajas, aceitunas y cebolla)"
     
     return res.capitalize()
 
