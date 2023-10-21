@@ -15,7 +15,7 @@ from variables import (BOT_CHAT_ID_BOCATAS, BOT_CHAT_ID_DEBUG,
 DEBUG = False
 BOCATAS_JSON = "data/bocatas.json" if not DEBUG else "data/bocatas-debug.json"
 MENU_JSON = "data/menus.json" if not DEBUG else "data/menus-debug.json"
-PERIOD = 60 if not DEBUG else 10
+PERIOD = 120 if not DEBUG else 10
 
 FROM_NUMBER_TO_WEEK_DAY = {
     0: "lunes",
@@ -118,7 +118,7 @@ def bocate_name_corrector(bocata_name):
     res = res.replace("longani za", "longaniza")
     res = res.replace("ma honesa", "mahonesa")
     res = res.replace("m ahonesa", "mahonesa")
-    res = res.replace("pata tas", "patatas")
+    res = re.sub("\b(p ?a ?t ?a ?t ?a ?s)\b,", "patatas", res)
     res = res.replace("atú n", "atún")
     res = res.replace("hu evo", "huevo")
     res = res.replace("a rodaja ", "a rodajas")
@@ -126,11 +126,16 @@ def bocate_name_corrector(bocata_name):
     res = res.replace("sal sa", "salsa")
     res = res.replace("p lancha", "plancha")
     res = res.replace("roda jas", "rodaja")
+    res = res.replace("rom ana", "romana")
+    res = res.replace(" ya ", " y ")
+    res = res.replace("puntillas", "puntilla")
+    res = res.replace("t omate", "tomate")
 
     # Normalización de bocatas
     res = res.replace("tomate a rodajas y aceite", "tomate a rodajas")
     res = res.replace("con rodaja de tomate", "con tomate a rodajas")
     res = res.replace("rodaja tomate", "tomate a rodajas")
+    res = res.replace("y tomate a rodajas", "con tomate a rodajas")
     res = res.replace("secreto iberico", "secreto")
     res = res.replace("secreto plancha", "secreto")
     res = res.replace("secreto a la plancha", "secreto")
@@ -146,9 +151,20 @@ def bocate_name_corrector(bocata_name):
     res = res.replace("chistorra a la sidra", "chistorra")
     res = res.replace("tortilla de ", "tortilla ")
     res = res.replace("puntilla rebozada", "puntilla a la andaluza")
-    res = res.replace("morcilla de burgos con huevo frito", "morcilla de burgos con huevo")
-    res = res.replace("morcilla de burgos con huevo roto", "morcilla de burgos con huevo")
-    
+    res = res.replace("morcilla de burgos con huevo frito",
+                      "morcilla de burgos con huevo")
+    res = res.replace("morcilla de burgos con huevo roto",
+                      "morcilla de burgos con huevo")
+    res = res.replace("queso plancha", "queso")
+    res = res.replace("queso a la plancha", "queso")
+    res = res.replace("salsa chimichurri", "chimichurri")
+    res = res.replace("salsa de mostaza", "mostaza")
+    res = res.replace("crema de queso con salmón", "salmón con crema de queso")
+    res = res.replace("con patatas y chimichurri", "con chimichurri y patatas")
+    res = res.replace("con patatas y mayonesa", "con mayonesa y patatas")
+    res = res.replace("con patatas y allioli", "con allioli y patatas")
+    res = res.replace("con patatas y mayonesa", "con mayonesa y patatas")
+    res = res.replace("con anchoas", "y anchoas")
 
     # Normalización de ingredientes
     res = res.replace("all i oli", "allioli")
@@ -162,7 +178,12 @@ def bocate_name_corrector(bocata_name):
     res = res.replace("mahonesa", "mayonesa")
     res = res.replace("patatas fritas", "patatas")
     res = res.replace("huevo revuelto o roto", "huevo roto")
+    res = res.replace("huevo revuelto", "huevo roto")
     res = res.replace("atun", "atún")
+    res = res.replace("calabacín plancha", "calabacín")
+    res = res.replace("salmon", "salmón")
+    res = res.replace("longaniza campera", "longaniza especial")
+    res = res.replace("longaniza criolla", "longaniza especial")
 
     # Casos muy especiales
     if "palleter" in res:
@@ -177,7 +198,9 @@ def bocate_name_corrector(bocata_name):
         res = "Almussafes (sobrasada, queso y cebolla)"
     elif ("verano") in res:
         res = "verano (atún, huevo duro, tomate a rodajas, aceitunas y cebolla)"
-    
+    elif ("puntilla") in res:
+        res = "puntilla a la andaluza con mayonesa"
+
     return res.capitalize()
 
 
@@ -209,7 +232,7 @@ def bocatas_data_extractor():
                             and all(x.isalpha() or x.isspace() for x in aux)):
                         bocatas.append((aux, i))
                     i += 1
-                    
+
             else:
                 prices.append(line.strip().split()[2])
         else:
@@ -269,9 +292,11 @@ def update_bocata_info(bocatas, prices, pdf_today):
             data[bocata]["frecuency"][FROM_NUMBER_TO_WEEK_DAY[week_day]] = 1
         else:
             if float(data[bocata]["last_price"].replace(",", ".")) > float(price.replace(",", ".")):
-                diff = float(data[bocata]["last_price"].replace(",", ".")) - float(price.replace(",", "."))
+                diff = float(data[bocata]["last_price"].replace(
+                    ",", ".")) - float(price.replace(",", "."))
             else:
-                diff = float(price.replace(",", ".")) - float(data[bocata]["last_price"].replace(",", "."))
+                diff = float(price.replace(",", ".")) - \
+                    float(data[bocata]["last_price"].replace(",", "."))
             aux_last_day = data[bocata]["last_day"]
             aux_last_price = data[bocata]["last_price"]
             data[bocata]["last_day"] = pdf_today
