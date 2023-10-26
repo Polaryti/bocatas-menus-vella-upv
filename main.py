@@ -115,10 +115,10 @@ def bocate_name_corrector(bocata_name):
     res = res.replace("a nchoa", "anchoa")
     res = res.replace("anc hoa", "anchoa")
     res = res.replace("pastor", "pastor:")
-    res = res.replace("longani za", "longaniza")
+    res = re.sub(r"\b(l ?o ?n ?g ?a ?n ?i ?z ?a ?s)\b", "longanizas", res)
+    res = re.sub(r"\b(p ?a ?t ?a ?t ?a ?s)\b", "patatas", res)
     res = res.replace("ma honesa", "mahonesa")
     res = res.replace("m ahonesa", "mahonesa")
-    res = re.sub("\b(p ?a ?t ?a ?t ?a ?s)\b,", "patatas", res)
     res = res.replace("atú n", "atún")
     res = res.replace("hu evo", "huevo")
     res = res.replace("a rodaja ", "a rodajas")
@@ -130,6 +130,9 @@ def bocate_name_corrector(bocata_name):
     res = res.replace(" ya ", " y ")
     res = res.replace("puntillas", "puntilla")
     res = res.replace("t omate", "tomate")
+    res = res.replace("chumichurr i", "chimichurri")
+    res = res.replace("chumichurri", "chimichurri")
+    
 
     # Normalización de bocatas
     res = res.replace("tomate a rodajas y aceite", "tomate a rodajas")
@@ -159,11 +162,6 @@ def bocate_name_corrector(bocata_name):
     res = res.replace("queso a la plancha", "queso")
     res = res.replace("salsa chimichurri", "chimichurri")
     res = res.replace("salsa de mostaza", "mostaza")
-    res = res.replace("crema de queso con salmón", "salmón con crema de queso")
-    res = res.replace("con patatas y chimichurri", "con chimichurri y patatas")
-    res = res.replace("con patatas y mayonesa", "con mayonesa y patatas")
-    res = res.replace("con patatas y allioli", "con allioli y patatas")
-    res = res.replace("con patatas y mayonesa", "con mayonesa y patatas")
     res = res.replace("con anchoas", "y anchoas")
 
     # Normalización de ingredientes
@@ -184,6 +182,13 @@ def bocate_name_corrector(bocata_name):
     res = res.replace("salmon", "salmón")
     res = res.replace("longaniza campera", "longaniza especial")
     res = res.replace("longaniza criolla", "longaniza especial")
+    
+    # Ordenación de ingredientes
+    res = res.replace("crema de queso con salmón", "salmón con crema de queso")
+    res = res.replace("con patatas y chimichurri", "con chimichurri y patatas")
+    res = res.replace("con patatas y mayonesa", "con mayonesa y patatas")
+    res = res.replace("con patatas y allioli", "con allioli y patatas")
+    res = res.replace("con patatas y mayonesa", "con mayonesa y patatas")
 
     # Casos muy especiales
     if "palleter" in res:
@@ -219,7 +224,9 @@ def bocatas_data_extractor():
         elif "€" in line:
             if "PRECIO" in line:
                 if not line.strip().split()[1].isalpha():
-                    prices.append(line.strip().split()[1])
+                    # prices.append(line.strip().split()[1])
+                    prices.append(line.strip().split()[
+                                  line.split().index("PRECIO……………") + 1])
                 else:
                     prices.append(line.strip().split()[-4])
                     aux = line.replace(",", "")
