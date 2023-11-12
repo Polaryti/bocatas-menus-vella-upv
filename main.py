@@ -75,6 +75,8 @@ def platos_name_corrector(plato_name):
     res = res.replace("salteada s", "salteadas")
     res = res.replace("verdu ras", "verduras")
     res = res.replace("cordó n", "cordón")
+    res = res.replace("saltead os", "salteados")
+    res = res.replace("valencian o", "valenciano")
 
     return res.capitalize()
 
@@ -104,7 +106,7 @@ def platos_data_extractor(menu):
 
 
 def bocate_name_corrector(bocata_name):
-    res = re.sub("\s+", " ", bocata_name)
+    res = re.sub(r"\s+", " ", bocata_name)
     res = res.lower()
 
     # Caracteres especiales
@@ -128,11 +130,12 @@ def bocate_name_corrector(bocata_name):
     res = res.replace("roda jas", "rodaja")
     res = res.replace("rom ana", "romana")
     res = res.replace(" ya ", " y ")
-    res = res.replace("puntillas", "puntilla")
+    res = res.replace(" ala ", " a la ")
+    res = res.replace("puntillas ", "puntilla ")
+    res = res.replace("calamar ", "calamares ")
     res = res.replace("t omate", "tomate")
     res = res.replace("chumichurr i", "chimichurri")
     res = res.replace("chumichurri", "chimichurri")
-    
 
     # Normalización de bocatas
     res = res.replace("tomate a rodajas y aceite", "tomate a rodajas")
@@ -182,7 +185,7 @@ def bocate_name_corrector(bocata_name):
     res = res.replace("salmon", "salmón")
     res = res.replace("longaniza campera", "longaniza especial")
     res = res.replace("longaniza criolla", "longaniza especial")
-    
+
     # Ordenación de ingredientes
     res = res.replace("crema de queso con salmón", "salmón con crema de queso")
     res = res.replace("con patatas y chimichurri", "con chimichurri y patatas")
@@ -225,8 +228,9 @@ def bocatas_data_extractor():
             if "PRECIO" in line:
                 if not line.strip().split()[1].isalpha():
                     # prices.append(line.strip().split()[1])
+                    line = re.sub(r'PRECIO\s*\…+', "PRECIO", line)
                     prices.append(line.strip().split()[
-                                  line.split().index("PRECIO……………") + 1])
+                                  line.split().index("PRECIO") + 1])
                 else:
                     prices.append(line.strip().split()[-4])
                     aux = line.replace(",", "")
