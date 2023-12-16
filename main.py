@@ -62,7 +62,7 @@ def is_necessary_send_update(pdf_date, menu):
     if json_date[2] < 2000:
         json_date[2] += 2000
 
-    return json_date != pdf_date and pdf_date == today_date
+    return json_date != pdf_date # and pdf_date == today_date
 
 
 def platos_name_corrector(plato_name):
@@ -166,6 +166,8 @@ def bocate_name_corrector(bocata_name):
     res = res.replace("salsa chimichurri", "chimichurri")
     res = res.replace("salsa de mostaza", "mostaza")
     res = res.replace("con anchoas", "y anchoas")
+    res = res.replace("sobrasada plancha", "sobrasada a la plancha")
+    res = res.replace("revuelto de", "revuelto")
 
     # Normalización de ingredientes
     res = res.replace("all i oli", "allioli")
@@ -192,6 +194,7 @@ def bocate_name_corrector(bocata_name):
     res = res.replace("con patatas y mayonesa", "con mayonesa y patatas")
     res = res.replace("con patatas y allioli", "con allioli y patatas")
     res = res.replace("con patatas y mayonesa", "con mayonesa y patatas")
+    res = res.replace("cebolla y atún", "atún y cebolla")
 
     # Casos muy especiales
     if "palleter" in res:
