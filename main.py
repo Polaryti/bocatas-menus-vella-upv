@@ -9,8 +9,12 @@ import schedule
 from PyPDF2 import PdfReader
 
 from utils import download_update_scores
-from variables import (BOT_CHAT_ID_BOCATAS, BOT_CHAT_ID_DEBUG,
-                       BOT_CHAT_ID_MENUS, BOT_TOKEN)
+from variables import (
+    BOT_CHAT_ID_BOCATAS,
+    BOT_CHAT_ID_DEBUG,
+    BOT_CHAT_ID_MENUS,
+    BOT_TOKEN,
+)
 
 DEBUG = False
 BOCATAS_JSON = "data/bocatas.json" if not DEBUG else "data/bocatas-debug.json"
@@ -24,14 +28,10 @@ FROM_NUMBER_TO_WEEK_DAY = {
     3: "jueves",
     4: "viernes",
     5: "sabado",
-    6: "domingo"
+    6: "domingo",
 }
 
-FROM_NUMBER_TO_MENU = {
-    0: "Bocadillo",
-    1: "Menu_normal",
-    2: "Menu_integral"
-}
+FROM_NUMBER_TO_MENU = {0: "Bocadillo", 1: "Menu_normal", 2: "Menu_integral"}
 
 
 def download_pdf(menu: int):
@@ -39,13 +39,13 @@ def download_pdf(menu: int):
     url = "http://www.lavella.es/doc/" + menu
     response = requests.get(url)
 
-    with open(menu, 'wb') as f:
+    with open(menu, "wb") as f:
         f.write(response.content)
 
 
 def get_json_day(menu):
     json_file = BOCATAS_JSON if menu == 0 else MENU_JSON
-    with open(json_file, encoding='utf-8') as f:
+    with open(json_file, encoding="utf-8") as f:
         data = json.load(f)
         return data["last_day"] if menu == 0 else data[str(menu) + "_last_day"]
 
@@ -54,15 +54,14 @@ def is_necessary_send_update(pdf_date, menu):
     if DEBUG:
         return True
     json_date = list(map(int, get_json_day(menu).split("-")))
-    today_date = list(
-        map(int, date.today().strftime("%d-%m-%Y").split("-")))
+    today_date = list(map(int, date.today().strftime("%d-%m-%Y").split("-")))
     pdf_date = list(map(int, pdf_date.split("-")))
     if pdf_date[2] < 2000:
         pdf_date[2] += 2000
     if json_date[2] < 2000:
         json_date[2] += 2000
 
-    return json_date != pdf_date # and pdf_date == today_date
+    return json_date != pdf_date  # and pdf_date == today_date
 
 
 def platos_name_corrector(plato_name):
@@ -96,12 +95,18 @@ def platos_data_extractor(menu):
         elif "*" in line:
             menu_delimiter_count += 1
         elif menu_delimiter_count == 3:
-            return pdf_date, [[platos_name_corrector(plato) for plato in platos[0]], [platos_name_corrector(plato) for plato in platos[1]], [platos_name_corrector(plato) for plato in platos[2]]]
-        elif 'o ' != line and pdf_date is not None:
+            return pdf_date, [
+                [platos_name_corrector(plato) for plato in platos[0]],
+                [platos_name_corrector(plato) for plato in platos[1]],
+                [platos_name_corrector(plato) for plato in platos[2]],
+            ]
+        elif "o " != line and pdf_date is not None:
             aux = line.replace(",", "")
-            if (any(x.isalpha() for x in aux)
+            if (
+                any(x.isalpha() for x in aux)
                 and any(x.isspace() for x in aux)
-                    and all(x.isalpha() or x.isspace() for x in aux)):
+                and all(x.isalpha() or x.isspace() for x in aux)
+            ):
                 platos[menu_delimiter_count].append(line.strip())
 
 
@@ -157,10 +162,12 @@ def bocate_name_corrector(bocata_name):
     res = res.replace("chistorra a la sidra", "chistorra")
     res = res.replace("tortilla de ", "tortilla ")
     res = res.replace("puntilla rebozada", "puntilla a la andaluza")
-    res = res.replace("morcilla de burgos con huevo frito",
-                      "morcilla de burgos con huevo")
-    res = res.replace("morcilla de burgos con huevo roto",
-                      "morcilla de burgos con huevo")
+    res = res.replace(
+        "morcilla de burgos con huevo frito", "morcilla de burgos con huevo"
+    )
+    res = res.replace(
+        "morcilla de burgos con huevo roto", "morcilla de burgos con huevo"
+    )
     res = res.replace("queso plancha", "queso")
     res = res.replace("queso a la plancha", "queso")
     res = res.replace("salsa chimichurri", "chimichurri")
@@ -231,9 +238,10 @@ def bocatas_data_extractor():
             if "PRECIO" in line:
                 if not line.strip().split()[1].isalpha():
                     # prices.append(line.strip().split()[1])
-                    line = re.sub(r'PRECIO\s*\…+', "PRECIO", line)
-                    prices.append(line.strip().split()[
-                                  line.split().index("PRECIO") + 1])
+                    line = re.sub(r"PRECIO\s*\…+", "PRECIO", line)
+                    prices.append(
+                        line.strip().split()[line.split().index("PRECIO") + 1]
+                    )
                 else:
                     prices.append(line.strip().split()[-4])
                     aux = line.replace(",", "")
@@ -241,9 +249,11 @@ def bocatas_data_extractor():
                     aux = aux.replace(")", "")
                     aux = aux.strip().split()[:-5]
                     aux = " ".join(aux)
-                    if (any(x.isalpha() for x in aux)
+                    if (
+                        any(x.isalpha() for x in aux)
                         and any(x.isspace() for x in aux)
-                            and all(x.isalpha() or x.isspace() for x in aux)):
+                        and all(x.isalpha() or x.isspace() for x in aux)
+                    ):
                         bocatas.append((aux, i))
                     i += 1
 
@@ -253,9 +263,11 @@ def bocatas_data_extractor():
             aux = line.replace(",", "")
             aux = aux.replace("(", "")
             aux = aux.replace(")", "")
-            if (any(x.isalpha() for x in aux)
+            if (
+                any(x.isalpha() for x in aux)
                 and any(x.isspace() for x in aux)
-                    and all(x.isalpha() or x.isspace() for x in aux)):
+                and all(x.isalpha() or x.isspace() for x in aux)
+            ):
                 bocatas.append((line.strip(), i))
             i += 1
 
@@ -263,8 +275,10 @@ def bocatas_data_extractor():
     if len(bocatas) == 2:
         bocatas = [bocatas[0][0], bocatas[1][0]]
     elif len(bocatas) == 4:
-        bocatas = [bocatas[0][0] + " " + bocatas[1]
-                   [0], bocatas[2][0] + " " + bocatas[3][0]]
+        bocatas = [
+            bocatas[0][0] + " " + bocatas[1][0],
+            bocatas[2][0] + " " + bocatas[3][0],
+        ]
     elif len(bocatas) == 3:
         if bocatas[0][1] == bocatas[1][1] - 1:
             bocatas = [bocatas[0][0] + " " + bocatas[1][0], bocatas[2][0]]
@@ -296,34 +310,39 @@ def update_bocata_info(bocatas, prices, pdf_today):
                     "jueves": 0,
                     "viernes": 0,
                     "sabado": 0,
-                    "domingo": 0
+                    "domingo": 0,
                 },
                 "score": -1,
                 "count": 1,
-                "img": ""
+                "img": "",
             }
 
             data[bocata]["frecuency"][FROM_NUMBER_TO_WEEK_DAY[week_day]] = 1
         else:
-            if float(data[bocata]["last_price"].replace(",", ".")) > float(price.replace(",", ".")):
-                diff = float(data[bocata]["last_price"].replace(
-                    ",", ".")) - float(price.replace(",", "."))
+            if float(data[bocata]["last_price"].replace(",", ".")) > float(
+                price.replace(",", ".")
+            ):
+                diff = float(data[bocata]["last_price"].replace(",", ".")) - float(
+                    price.replace(",", ".")
+                )
             else:
-                diff = float(price.replace(",", ".")) - \
-                    float(data[bocata]["last_price"].replace(",", "."))
+                diff = float(price.replace(",", ".")) - float(
+                    data[bocata]["last_price"].replace(",", ".")
+                )
             aux_last_day = data[bocata]["last_day"]
             aux_last_price = data[bocata]["last_price"]
             data[bocata]["last_day"] = pdf_today
             data[bocata]["last_price"] = price
-            data[bocata]["frecuency"][FROM_NUMBER_TO_WEEK_DAY[week_day]] = int(
-                data[bocata]["frecuency"][FROM_NUMBER_TO_WEEK_DAY[week_day]]) + 1
+            data[bocata]["frecuency"][FROM_NUMBER_TO_WEEK_DAY[week_day]] = (
+                int(data[bocata]["frecuency"][FROM_NUMBER_TO_WEEK_DAY[week_day]]) + 1
+            )
             data[bocata]["count"] = data[bocata]["count"] + 1
 
         flags[str(index) + "_last_day"] = aux_last_day
         flags[str(index) + "_last_price"] = aux_last_price
         flags[str(index) + "_diff"] = diff
 
-    with open(BOCATAS_JSON, encoding='utf-8') as f:
+    with open(BOCATAS_JSON, encoding="utf-8") as f:
         data = json.load(f)
 
     data["last_day"] = pdf_today
@@ -332,20 +351,23 @@ def update_bocata_info(bocatas, prices, pdf_today):
         individual_update(bocatas[i], prices[i], data, i)
 
     json_object = json.dumps(data, indent=4)
-    with open(BOCATAS_JSON, "w", encoding='utf-8') as f:
+    with open(BOCATAS_JSON, "w", encoding="utf-8") as f:
         f.write(json_object)
 
     for i in range(len(bocatas)):
-        data[bocatas[i]]['last_day'] = flags[str(i) + "_last_day"]
-        data[bocatas[i]]['last_price'] = flags[str(i) + "_last_price"]
-        data[bocatas[i]]['diff'] = flags[str(i) + "_diff"]
+        data[bocatas[i]]["last_day"] = flags[str(i) + "_last_day"]
+        data[bocatas[i]]["last_price"] = flags[str(i) + "_last_price"]
+        data[bocatas[i]]["diff"] = flags[str(i) + "_diff"]
 
     return data[bocatas[0]], data[bocatas[1]]
 
 
 def add_bocata_entry(bocata_name, bocata_data: dict, today):
-    data = ["\"" + bocata_name + "\"",
-            str(bocata_data["last_price"]).replace(",", "."), "\"" + today + "\""]
+    data = [
+        '"' + bocata_name + '"',
+        str(bocata_data["last_price"]).replace(",", "."),
+        '"' + today + '"',
+    ]
     with open("data/bocata-data.csv", "a") as myBOCATAS_FILE:
         myBOCATAS_FILE.write(",".join(data) + "\n")
 
@@ -356,10 +378,10 @@ def check_menu(menu):
     if not is_necessary_send_update(pdf_date, menu):
         return -1
 
-    with open(MENU_JSON, encoding='utf-8', mode="r") as f:
+    with open(MENU_JSON, encoding="utf-8", mode="r") as f:
         data = json.load(f)
         data[str(menu) + "_last_day"] = pdf_date
-    with open(MENU_JSON, encoding='utf-8', mode="w") as f:
+    with open(MENU_JSON, encoding="utf-8", mode="w") as f:
         json_object = json.dumps(data, indent=4)
         f.write(json_object)
 
@@ -398,8 +420,7 @@ def check_bocatas():
     if not is_necessary_send_update(pdf_date, 0):
         return -1
 
-    bocata_data_one, bocata_data_two = update_bocata_info(
-        bocatas, prices, pdf_date)
+    bocata_data_one, bocata_data_two = update_bocata_info(bocatas, prices, pdf_date)
     if not DEBUG:
         add_bocata_entry(bocatas[0], bocata_data_one, pdf_date)
         add_bocata_entry(bocatas[1], bocata_data_two, pdf_date)
@@ -437,9 +458,14 @@ def bot_send_text(bot_message, menu):
     else:
         BOT_CHAT_ID = BOT_CHAT_ID_BOCATAS if menu == 0 else BOT_CHAT_ID_MENUS
     bot_token = BOT_TOKEN
-    send_text = 'https://api.telegram.org/bot' + bot_token + \
-        '/sendMessage?chat_id=' + BOT_CHAT_ID + \
-        '&parse_mode=Markdown&text=' + bot_message
+    send_text = (
+        "https://api.telegram.org/bot"
+        + bot_token
+        + "/sendMessage?chat_id="
+        + BOT_CHAT_ID
+        + "&parse_mode=Markdown&text="
+        + bot_message
+    )
 
     response = requests.get(send_text)
 
