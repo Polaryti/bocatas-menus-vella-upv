@@ -124,15 +124,17 @@ def bocate_name_corrector(bocata_name):
     res = res.replace("pastor", "pastor:")
     res = re.sub(r"\b(l ?o ?n ?g ?a ?n ?i ?z ?a ?s)\b", "longanizas", res)
     res = re.sub(r"\b(p ?a ?t ?a ?t ?a ?s)\b", "patatas", res)
+    res = re.sub(r"\b(t ?o ?r ?t ?i ?al ?l ?a)\b", "tortilla", res)
     res = res.replace("ma honesa", "mahonesa")
     res = res.replace("m ahonesa", "mahonesa")
     res = res.replace("atú n", "atún")
     res = res.replace("hu evo", "huevo")
-    res = res.replace("a rodaja ", "a rodajas")
     res = res.replace("chistorr a", "chistorra")
     res = res.replace("sal sa", "salsa")
     res = res.replace("p lancha", "plancha")
     res = res.replace("roda jas", "rodaja")
+    res = res.replace("rodajasy", "rodajas y")
+    res = res.replace("a rodaja ", "a rodajas")
     res = res.replace("rom ana", "romana")
     res = res.replace(" ya ", " y ")
     res = res.replace(" ala ", " a la ")
@@ -141,6 +143,7 @@ def bocate_name_corrector(bocata_name):
     res = res.replace("t omate", "tomate")
     res = res.replace("chumichurr i", "chimichurri")
     res = res.replace("chumichurri", "chimichurri")
+    res = res.replace("secre to", "secreto")
 
     # Normalización de bocatas
     res = res.replace("tomate a rodajas y aceite", "tomate a rodajas")
@@ -175,6 +178,8 @@ def bocate_name_corrector(bocata_name):
     res = res.replace("con anchoas", "y anchoas")
     res = res.replace("sobrasada plancha", "sobrasada a la plancha")
     res = res.replace("revuelto de", "revuelto")
+    res = res.replace("anchoas con aceite", "anchoas")
+    res = res.replace("rodajas y aceite oliva", "rodajas")
 
     # Normalización de ingredientes
     res = res.replace("all i oli", "allioli")
@@ -186,6 +191,7 @@ def bocate_name_corrector(bocata_name):
     res = res.replace("calabacin", "calabacín")
     res = res.replace("bacon", "bacón")
     res = res.replace("mahonesa", "mayonesa")
+    res = res.replace("mahonena", "mayonesa")
     res = res.replace("patatas fritas", "patatas")
     res = res.replace("huevo revuelto o roto", "huevo roto")
     res = res.replace("huevo revuelto", "huevo roto")
@@ -194,6 +200,15 @@ def bocate_name_corrector(bocata_name):
     res = res.replace("salmon", "salmón")
     res = res.replace("longaniza campera", "longaniza especial")
     res = res.replace("longaniza criolla", "longaniza especial")
+    res = res.replace("sobrasada y", "sobrasada a la plancha y")
+    res = res.replace("magreta", "magro")
+    res = res.replace("pechuga de pollo", "pollo")
+    res = res.replace("pechuga plancha", "pollo")
+    res = res.replace("y crema de queso", "con crema de queso")
+    res = res.replace("queso de cabra", "queso cabra")
+    res = res.replace("crema de queso", "queso crema")
+    res = res.replace("tomate catalana", "tomate rallado")
+    res = res.replace("pan catalana", "tomate rallado")
 
     # Ordenación de ingredientes
     res = res.replace("crema de queso con salmón", "salmón con crema de queso")
@@ -210,12 +225,10 @@ def bocate_name_corrector(bocata_name):
         res = "pastor (jamón plancha, huevo frito y patatas a lo pobre)"
     elif "esgarraet" in res:
         res = "esgarraet (pimiento, bacalao, ajos y aceite)"
-    elif "hamburguesa" in res:
-        res = "hamburguesa (tomate, lechuga, cebolla, pan hamburguesa, mostaza suave, sobre de ketchup y patatas)"
     elif ("almussafes" in res) or ("almusafes" in res):
         res = "Almussafes (sobrasada, queso y cebolla)"
     elif ("verano") in res:
-        res = "verano (atún, huevo duro, tomate a rodajas, aceitunas y cebolla)"
+        res = "verano (atún, huevo duro, tomate a rodajas, aceitunas y cebolla cruda)"
     elif ("puntilla") in res:
         res = "puntilla a la andaluza con mayonesa"
 
@@ -238,7 +251,7 @@ def bocatas_data_extractor():
             if "PRECIO" in line:
                 if not line.strip().split()[1].isalpha():
                     # prices.append(line.strip().split()[1])
-                    line = re.sub(r"PRECIO\s*\…+", "PRECIO", line)
+                    line = re.sub(r"PRECIO\s*(\s*…\s*)+", "PRECIO ", line)
                     prices.append(
                         line.strip().split()[line.split().index("PRECIO") + 1]
                     )
